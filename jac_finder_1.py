@@ -93,17 +93,16 @@ for pos in np.arange(N):
     sd_pos = np.std(u[pos,:])
     sd_pos_vec_all[pos] = sd_pos
 
-
+Leng =5 # int(len(u[0,:])/10)
 #array of the Jacobians
 #find how many columns u has. That is len(u[0,:]), the length of a row.
-Jac = np.zeros((int(len(u[0,:])/10),N,N))
+Jac = np.zeros((Leng,N,N))
 #Note: the u matrix has len(t) columns, since it adds in the u_0 for the first column.
 #For u, the each column is a time, and each row is a position
 #There are len(t)-1 number of jacobians, since we cannot find the jacobian at the last time.
 # record start time
 start = time.time()
 
-Leng = int(len(u[0,:])/10)
 for i in np.arange(Leng):
     Jac_i = np.zeros((N,N))
     for pos in np.arange(N):
@@ -131,17 +130,18 @@ for i in np.arange(Leng):
     end = time.time()
 
     print("1: ",end-start)
-    scipy.io.savemat('jac_1.mat', {'jac1_'+str(i): Jac_i})
+    #create a counter. every time i is divisible by 100, we make a new file ro save our stuff in.
+    f = open('/arthurresearch/jac_mats_arthur/jac1_' + str(i) + '.mat', "w")
+    scipy.io.savemat('/arthurresearch/jac_mats_arthur/jac1_' + str(i) + '.mat', {'jac1_'+str(i): Jac_i})
 
 print(np.abs(Jac[1,:,:] - Jac[2,:,:]).max())
 
 #hdf5 stuff
 
 #Let's write the Jac into a file
-Jac_mat_lab= {}
-Jac_mat_lab['jac'] = Jac
-hdf5storage.write(Jac_mat_lab,'.', '/arthurresearch/jac_thing.hdf5', matlab_compatible=True)
-#hdf5storage.savemat('/arthurresearch/jac.mat',Jac_mat_lab,format='7.3')
+#Jac_mat_lab= {}
+#Jac_mat_lab['jac'] = Jac
+#hdf5storage.write(Jac_mat_lab,'.', '/arthurresearch/jac_thing.hdf5', matlab_compatible=True)
 
 
 
